@@ -1,0 +1,4 @@
+<aura:component  access="global">
+	<c:ReusableLayoutCMP aura:id="accountForm" sObject="Account" layoutname="Account Layout"/>
+    <lightning:button variant="brand" label="Save" title="Save Account" onclick="{!c.saveRecord}"/>
+</aura:component>

@@ -11,8 +11,8 @@
     This solutions is developed to take advantage of dynamic customization of page layout editor and control on save operation, no need of edit access and limitless potential to develop on top.
 
     ### Screenshots:
-    ![Account record edit example 1](https://psl392-dev-ed--c.visualforce.com/resource/1656154881000/auraDemo1)
-    ![Account record edit example 2](https://psl392-dev-ed--c.visualforce.com/resource/1656155082000/auraDemo2?)
+    ![Account record edit example 1](images/aura-demo-1.png "Screenshot 1")
+    ![Account record edit example 2](images/aura-demo-2.png "Screenshot 2")
 
     ReusableExample1.cmp
     ```
@@ -41,12 +41,12 @@
     ```
     ### Component List:
 
-        - `ReusableLayoutCMP` : Aura component. 
-        - `GenericLookupCMP` : Aura component.
-        - `GenericLookupResult` : Aura component.
-        - `GenericLookupEvent` : Component event.
-        - `ReusableLayoutCtrl` : Apex class.
-        - `LayoutWrapper` : Apex class.
+        - ReusableLayoutCMP : Aura component. 
+        - GenericLookupCMP : Aura component.
+        - GenericLookupResult : Aura component.
+        - GenericLookupEvent : Component event.
+        - ReusableLayoutCtrl : Apex class.
+        - LayoutWrapper : Apex class.
 
 
 

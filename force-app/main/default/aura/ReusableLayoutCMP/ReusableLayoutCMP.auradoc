@@ -1,0 +1,181 @@
+<aura:documentation>
+	<aura:description>
+		<h4>Field Type Mapping</h4>
+		<p>Based of field type different input components are used. Mappig is as shown in the following table</p>
+		<table>
+			<tr>
+				<th>Data Type</th>
+				<th>fieldType</th>
+				<th>Input Component Type</th>
+				<th>Description</th>
+			</tr>
+			<tr>
+				<td>Auto Number</td>
+				<td>text</td>
+				<td><code>lightning:input</code></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Master-Detail</td>
+				<td>reference</td>
+				<td><code>c:GenericLookupCMP</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Checkbox</td>
+				<td>checkbox</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Lookup</td>
+				<td>reference</td>
+				<td><code>c:GenericLookupCMP</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Currency</td>
+				<td>number</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Date</td>
+				<td>date</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Date/Time</td>
+				<td>datetime</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td>email</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Text (Encrypted)</td>
+				<td>password</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Formula</td>
+				<td>number/text/date/checkbox/time</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Geolocation</td>
+				<td>location</td>
+				<td><code>lightning:inputLocation</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Picklist (Multi-Select)</td>
+				<td>multipicklist</td>
+				<td><code>lightning:dualListbox</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Number</td>
+				<td>number</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Percent</td>
+				<td>number</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Phone</td>
+				<td>tel</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Picklist</td>
+				<td>picklist</td>
+				<td><code>lightning:select</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Text</td>
+				<td>text</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Text Area</td>
+				<td>textarea</td>
+				<td><code>lightning:textarea</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Long Text Area</td>
+				<td>textarea</td>
+				<td><code>lightning:textarea</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Rich Text Area</td>
+				<td>inputRich</td>
+				<td><code>lightning:inputRichText</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>Time</td>
+				<td>time</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+			<tr>
+				<td>URL</td>
+				<td>url</td>
+				<td><code>lightning:input</code></td>
+				<td>For more details <a href="">click here.</a></td>
+			</tr>
+		</table>
+		<h4>Field Customization</h4>
+		
+		<p>customSlots is map of field API name and customization object. Customization object can contain field specific properties and javascript handlers. These field specific properties may change based on field type.</p>
+		<ul>
+			<li>
+				<p><code>lightning:input</code> supported field types are password,datetime,time,text,date,number,email and url. Supported properties are following.</p>
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Description</th>
+			</tr>
+			<tr>
+				<td>fieldType</td>
+				<td>string</td>
+				<td>This property is mapped to type property of lightning:input</td>
+			</tr>
+			<tr>
+				<td>label</td>
+				<td>string</td>
+				<td>The text that displays next to a radio button.</td>
+			</tr>
+			<tr>
+				<td>value</td>
+				<td>string</td>
+				<td>The string that's used to identify which radio button is selected.</td>
+			</tr>
+		</table>
+			</li>
+		</ul>
+		
+	</aura:description>
+ 	
+	<aura:example name="example1" ref="c:ReusableExample1" label="Basic Example">
+		The following example will allow to creates new account record.
+	</aura:example>
+</aura:documentation>

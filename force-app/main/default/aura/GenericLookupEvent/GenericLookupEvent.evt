@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT">
+    <aura:attribute name="recordObj" type="sObject"/>
+</aura:event>

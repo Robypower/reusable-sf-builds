@@ -1,18 +1,54 @@
-# Salesforce DX Project: Next Steps
+# Salesforce DX Project: Reusable & Customisable salesforce solutions
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+- ## Project 1: Reusable and customisable edit page layout aura component
 
-## How Do You Plan to Deploy Your Changes?
+    Do you like [force:recordEdit](https://developer.salesforce.com/docs/component-library/bundle/force:recordEdit).
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+    Love page layout editor to add/remove/modify fields in page layout dynamically after deployment.
 
-## Configure Your Salesforce DX Project
+    Hate no control on record save operation, no control on page layout assignment, can not use this when user do not have edit access on object/fields (public sites).
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+    This solutions is developed to take advantage of dynamic customization of page layout editor and control on save operation, no need of edit access and limitless potential to develop on top.
 
-## Read All About It
+    ### Screenshots:
+    ![Account record edit example 1](https://psl392-dev-ed--c.visualforce.com/resource/1656154881000/auraDemo1)
+    ![Account record edit example 2](https://psl392-dev-ed--c.visualforce.com/resource/1656155082000/auraDemo2?)
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+    ReusableExample1.cmp
+    ```
+    <aura:component  access="global">
+        <c:ReusableLayoutCMP aura:id="accountForm" sObject="Account" layoutname="Account Layout"/>
+        <lightning:button variant="brand" label="Save" title="Save Account" onclick="{!c.saveRecord}"/>
+    </aura:component>
+    ```
+
+    ReusableExample1Controller.js
+    ```
+   ({
+        saveRecord : function(component, event, helper) {
+            var testCMP = component.find('accountForm');
+            if(testCMP){
+                var accountRecord = testCMP.saveRecord(); // Returns JSON record.
+                if(accountRecord){                
+                    console.log(JSON.stringify(accountRecord)); // Account record is ready to save.
+                }
+                else{
+                    // Required fields are missing.
+                }
+            }        
+        }
+    })
+    ```
+    ### Component List:
+
+        - `ReusableLayoutCMP` : Aura component. 
+        - `GenericLookupCMP` : Aura component.
+        - `GenericLookupResult` : Aura component.
+        - `GenericLookupEvent` : Component event.
+        - `ReusableLayoutCtrl` : Apex class.
+        - `LayoutWrapper` : Apex class.
+
+
+
+
+

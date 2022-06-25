@@ -1,0 +1,24 @@
+.THIS .leftPaddingClass {
+    padding-left: 2rem;
+}
+ 
+.THIS .pillSize{
+ width:100%;
+}
+
+.THIS .screenSize{
+ width:100%;
+}
+
+.THIS .slds-modal__container{
+    max-width: 90% !important;
+    width: 90% !important;
+    max-height: 90% !important;
+    /* height: 90% !important; */
+    height: max-content !important;
+}
+
+.THIS .slds-modal__content{
+    height: 100% !important;
+
+}

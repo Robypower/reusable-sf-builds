@@ -1,0 +1,238 @@
+<aura:component controller="ReusableLayoutCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="sObject" type="String" default="" required="true" description="The API name of the object."/>
+    <aura:attribute name="recordId" type="String" default="" description="The ID of the record to be displayed."/>
+    <aura:attribute name="layoutname" type="String" default="" required="true" description="The layout name of object to be displayed."/>
+    <aura:attribute name="layoutWrp" type="LayoutWrapper" description="Layout wrapper, can be used for expert customizations."/>
+    <aura:attribute name="isSpinner" type="Boolean" default="false" access="private" description="The waiting spinner controller. For internal use only."/>
+    <aura:attribute name="customSlots" type="Map" description="The map of field API name and customization object. Please refer section 'Field Customization' for more information."/>
+    <aura:attribute name="fieldNames" type="List" description="The list of visible field API names."/>
+    <aura:attribute name="disabledFieldNames" type="List" description="The list of disabled/readonly field API names."/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="saveRecord" action="{!c.saveRecord}" description="Returns record object in JSON format"></aura:method>
+    <aura:method name="reInitialize" action="{!c.doInit}" description="Re initialize component"> 
+    </aura:method>
+    <aura:method name="updateRecord" action="{!c.updateRecord}" description="Update readonly fields">
+        <aura:attribute name="record" type="Object" /> 
+    </aura:method>
+    <aura:method name="getAllFieldsMap" action="{!c.getAllFieldsMap}" description="Returns map of fields with field API name as key"></aura:method>
+    <div class="slds-box slds-theme_default">
+        <div id="SuccessToast1" style="display:none;">
+                    <div id="SuccessToast" class="slds-notify_container" style="padding : 10px 20px 10px 20px " >
+                        <div aura:id ="alert" class="slds-notify slds-notify--alert slds-theme--success " role="alert" >
+                            <lightning:icon iconName="utility:success" variant="success" size="medium" Class="iconContainer"/>&nbsp;
+                            <!-- <lightning:buttonIcon class="slds-notify__close " iconName="utility:close" variant="bare-inverse" size="medium" onclick="{!c.closeToastError}" alternativeText="Close alert." /> -->
+                            <div class="slds-notify__content">
+                                <h2 id ="successmsg1"></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+		<div id="ErrorToast1" style="display:none;">
+                    <div id="ErrorToast" class="slds-notify_container" style="padding : 10px 20px 10px 20px " >
+                        <div aura:id ="alert" class="slds-notify slds-notify--alert slds-theme--error " role="alert" >
+                            <lightning:icon iconName="utility:error" variant="success" size="medium" Class="iconContainer"/>&nbsp;
+                            <!-- <lightning:buttonIcon class="slds-notify__close " iconName="utility:close" variant="bare-inverse" size="medium" onclick="{!c.closeToastError}" alternativeText="Close alert." /> -->
+                            <div class="slds-notify__content">
+                                <h2 id ="errormsg1"></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        <!-- Spinner -->    
+        <aura:if isTrue="{!v.isSpinner}">
+            <div class="exampleHolder">
+                <lightning:spinner alternativeText="Loading" size="large" variant="brand"/>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.layoutWrp != null}">
+            <aura:iteration items="{!v.layoutWrp.sections}" var="sec">
+                <br/>
+                <div class="slds-text-heading_small" style="padding-top: 5px;">{!sec.name}</div>
+                <div class="slds-p-horizontal--small">
+                    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                        <div class="slds-form-element slds-is-required slds-p-top--x-small slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--3-of-6 slds-large-size--6-of-12">
+                            <aura:if isTrue="{!sec.col1 != null}">
+                                <aura:iteration items="{!sec.col1.fields}" var="field" indexVar="index">
+
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'reference' )}">
+                                        <div class="slds-form-element slds-is-required slds-p-top--x-small slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--3-of-6 slds-large-size--6-of-12">                    
+                                            <div class="slds-form-element__control"> 
+                                                <c:GenericLookupCMP aura:id="{!field.APIName}" objectAPIName="{!field.referenceto}" IconName="{!field.IconName}" field="{!field}" isRequired="{!field.required}" disabled="{!!field.editable}" label="{!field.label}" extraFields="{!field.extraFields}" maxResults="{!field.maxResults}"/>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+
+                                    
+                                        <aura:if isTrue="{!and(field.visible,(field.fieldType == 'tel' || field.fieldType == 'password' || field.fieldType == 'datetime' || field.fieldType == 'time'|| field.fieldType == 'text'|| field.fieldType == 'date'|| field.fieldType == 'number'|| field.fieldType == 'email' || field.fieldType =='url' ))}">
+                                                <div class="slds-form-element__control">                                                    
+                                                    <lightning:input aura:id="formInput" type="{!field.fieldType}" value="{!field.value}" label="{!field.label}" disabled="{!!field.editable}" pattern="{!field.pattern}" required="{!field.required}" name="{!field}" onfocus="{!c.onfocus}" onchange="{!c.onchange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"  autocomplete = "{!field.autocomplete}"  class = "{!field.class}"  dateStyle = "{!field.dateStyle}"  fieldLevelHelp = "{!field.fieldLevelHelp}"  formatter = "{!field.formatter}"  isLoading = "{!field.isLoading}"  max = "{!field.max}"  maxlength = "{!field.maxlength}"  messageToggleActive = "{!field.messageToggleActive}"  messageToggleInactive = "{!field.messageToggleInactive}"  messageWhenBadInput = "{!field.messageWhenBadInput}"  messageWhenPatternMismatch = "{!field.messageWhenPatternMismatch}"  messageWhenRangeOverflow = "{!field.messageWhenRangeOverflow}"  messageWhenRangeUnderflow = "{!field.messageWhenRangeUnderflow}"  messageWhenStepMismatch = "{!field.messageWhenStepMismatch}"  messageWhenTooLong = "{!field.messageWhenTooLong}"  messageWhenTooShort = "{!field.messageWhenTooShort}"  messageWhenTypeMismatch = "{!field.messageWhenTypeMismatch}"  messageWhenValueMissing = "{!field.messageWhenValueMissing}"  min = "{!field.min}"  minlength = "{!field.minlength}"  multiple = "{!field.multiple}"  placeholder = "{!field.placeholder}"  selectionEnd = "{!field.selectionEnd}"  selectionStart = "{!field.selectionStart}"  step = "{!field.step}"  tabindex = "{!field.tabindex}"  timeStyle = "{!field.timeStyle}"  timezone = "{!field.timezone}"  title = "{!field.title}"  variant = "{!field.variant}" />
+                                                </div>
+                                            </aura:if>
+                                    
+
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'checkbox')}">
+                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:input name="{!field}" aura:id="formInput"  type="{!field.fieldType}" checked="{!field.value}" label="{!field.label}" disabled="{!!field.editable}" required="{!field.required}" onfocus="{!c.onfocus}" onchange="{!c.onPicklistChange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}" class = "{!field.class}"  fieldLevelHelp = "{!field.fieldLevelHelp}"  messageToggleActive = "{!field.messageToggleActive}"  messageToggleInactive = "{!field.messageToggleInactive}" placeholder = "{!field.placeholder}"  tabindex = "{!field.tabindex}" title = "{!field.title}"  variant = "{!field.variant}"/> <!--onchange="{!c.handleCheck}"-->
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'location')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:inputLocation aura:id="formInput" label="{!field.label}" latitude="{!field.latitude}" longitude="{!field.longitude}" variant="{!field.variant}" title="{!field.title}" fieldLevelHelp = "{!field}" onblur="{!c.onblur}" onchange="{!c.onchange}" onfocus="{!c.onfocus}" required="{!field.required}" disabled="{!!field.editable}" />
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'multipicklist')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:dualListbox name="{!field}"
+                                            label="{!field.label}"
+                                                fieldLevelHelp = "{!field.fieldLevelHelp}"
+                                                options="{!field.picklistOptions}"
+                                                value="{!field.values}"
+                                                onfocus="{!c.onfocus}" onchange="{!c.onPicklistChange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}" addButtonLabel="{!field.addButtonLabel}" disableReordering="{!field.disableReordering}" disabled="{!!field.editable}" downButtonLabel="{!field.downButtonLabel}" max = "{!field.max}" messageWhenRangeOverflow = "{!field.messageWhenRangeOverflow}"  messageWhenRangeUnderflow = "{!field.messageWhenRangeUnderflow}" messageWhenValueMissing = "{!field.messageWhenValueMissing}" min = "{!field.min}" removeButtonLabel="{!field.removeButtonLabel}" required="{!field.required}" requiredOptions="{!field.requiredOptions}" selectedLabel="{!field.selectedLabel}" showActivityIndicator="{!field.showActivityIndicator}" size="{!field.size}" sourceLabel="{!field.sourceLabel}" tabindex = "{!field.tabindex}" upButtonLabel="{!field.upButtonLabel}"  variant="{!field.variant}"/>
+                                        </div>
+                                    </aura:if>
+
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'inputRich')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:inputRichText  shareWithEntityId="{!field}"  value="{!field.value}" placeholder = "{!field.placeholder}"  label="{!field.label}" disabled="{!!field.editable}" required="{!field.required}" onfocus="{!c.onfocus}"  onblur="{!c.onblur}"  title="{!field.title}" variant="{!field.variant}" accesskey = "{!field.accesskey}" ariaDescribedby="{!field.ariaDescribedby}" ariaLabel="{!field.ariaLabel}" ariaLabelledby="{!field.ariaLabelledby}" disabledCategories="{!field.disabledCategories}" formats="{!field.formats}" labelVisible="{!field.labelVisible}" messageWhenBadInput = "{!field.messageWhenBadInput}" tabindex = "{!field.tabindex}" valid="{!field.valid}" />
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'textarea')}">
+                                        <div class="slds-form-element__control">
+                                            
+                                            <lightning:textarea name="{!field}" aura:id="formInput" value="{!field.value}" disabled="{!!field.editable}" required="{!field.required}"  label="{!field.label}" onfocus="{!c.onfocus}" onchange="{!c.onchange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"  autocomplete = "{!field.autocomplete}"  class = "{!field.class}"  maxlength = "{!field.maxlength}"  messageWhenBadInput = "{!field.messageWhenBadInput}"  messageWhenTooLong = "{!field.messageWhenTooLong}"  messageWhenTooShort = "{!field.messageWhenTooShort}"  messageWhenValueMissing = "{!field.messageWhenValueMissing}"  minlength = "{!field.minlength}"  placeholder = "{!field.placeholder}"  tabindex = "{!field.tabindex}"  title = "{!field.title}"  variant = "{!field.variant}" />                                                                                    	
+                                        </div>                                    
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'picklist')}">
+                                      
+                                        <lightning:select aura:id="formInput" name="{!field}" label="{!field.label}" value="{!field.value}" disabled="{!!field.editable}" required="{!field.required}" onchange="{!c.onPicklistChange}" onfocus="{!c.onfocus}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"    messageWhenValueMissing = "{!field.messageWhenValueMissing}"  tabindex = "{!field.tabindex}"  title = "{!field.title}"  variant = "{!field.variant}" >
+                                            <option value="">-- Select --</option>
+                                            <aura:iteration items="{!field.picklistOptions}" var="option">
+                                            	<option value="{!option.value}" selected="{!field.value==option.value}">{!option.label}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                       
+
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'address')}">
+                                        <div class="slds-form-element__control">
+                                            
+                                            <lightning:inputAddress aura:id="formInput"
+                                                                    addressLabel="{!field.label}"
+                                                                    streetLabel="Street"
+                                                                    cityLabel="City"
+                                                                    countryLabel="Country"
+                                                                    provinceLabel="State"
+                                                                    postalCodeLabel="PostalCode"
+                                                                    street="{!field.address.street}"
+                                                                    city="{!field.address.city}"
+                                                                    country="{!field.address.country}"
+                                                                    province="{!field.address.province}"
+                                                                    postalCode="{!field.address.postalCode}"
+                                                                    disabled="{!!field.editable}" required="{!field.required}"
+                                                                    fieldLevelHelp="Help Text for inputAddress field"
+                                                                    />
+                                            
+                                        </div>                                    
+                                    </aura:if>
+                                </aura:iteration>
+                            </aura:if>
+                        </div> 
+                        <div class="slds-form-element slds-is-required slds-p-top--x-small slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--3-of-6 slds-large-size--6-of-12">
+                            <aura:if isTrue="{!sec.col2 != null}">
+                                <aura:iteration items="{!sec.col2.fields}" var="field">
+                                   
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'reference' )}">
+                                        <div class="slds-form-element slds-is-required slds-p-top--x-small slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--3-of-6 slds-large-size--6-of-12">                    
+                                            <div class="slds-form-element__control"> 
+                                                <c:GenericLookupCMP aura:id="{!field.APIName}" objectAPIName="{!field.referenceto}" IconName="{!field.IconName}" field="{!field}" isRequired="{!field.required}" disabled="{!!field.editable}" label="{!field.label}" extraFields="{!field.extraFields}" maxResults="{!field.maxResults}"/>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+
+                                    
+                                        <aura:if isTrue="{!and(field.visible,(field.fieldType == 'tel' || field.fieldType == 'password' || field.fieldType == 'datetime' || field.fieldType == 'time'|| field.fieldType == 'text'|| field.fieldType == 'date'|| field.fieldType == 'number'|| field.fieldType == 'email' || field.fieldType =='url' ))}">
+                                                <div class="slds-form-element__control">                                                    
+                                                    <lightning:input aura:id="formInput" type="{!field.fieldType}" value="{!field.value}" label="{!field.label}" disabled="{!!field.editable}" pattern="{!field.pattern}" required="{!field.required}" name="{!field}" onfocus="{!c.onfocus}" onchange="{!c.onchange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"  autocomplete = "{!field.autocomplete}"  class = "{!field.class}"  dateStyle = "{!field.dateStyle}"  fieldLevelHelp = "{!field.fieldLevelHelp}"  formatter = "{!field.formatter}"  isLoading = "{!field.isLoading}"  max = "{!field.max}"  maxlength = "{!field.maxlength}"  messageToggleActive = "{!field.messageToggleActive}"  messageToggleInactive = "{!field.messageToggleInactive}"  messageWhenBadInput = "{!field.messageWhenBadInput}"  messageWhenPatternMismatch = "{!field.messageWhenPatternMismatch}"  messageWhenRangeOverflow = "{!field.messageWhenRangeOverflow}"  messageWhenRangeUnderflow = "{!field.messageWhenRangeUnderflow}"  messageWhenStepMismatch = "{!field.messageWhenStepMismatch}"  messageWhenTooLong = "{!field.messageWhenTooLong}"  messageWhenTooShort = "{!field.messageWhenTooShort}"  messageWhenTypeMismatch = "{!field.messageWhenTypeMismatch}"  messageWhenValueMissing = "{!field.messageWhenValueMissing}"  min = "{!field.min}"  minlength = "{!field.minlength}"  multiple = "{!field.multiple}"  placeholder = "{!field.placeholder}"  selectionEnd = "{!field.selectionEnd}"  selectionStart = "{!field.selectionStart}"  step = "{!field.step}"  tabindex = "{!field.tabindex}"  timeStyle = "{!field.timeStyle}"  timezone = "{!field.timezone}"  title = "{!field.title}"  variant = "{!field.variant}" />
+                                                </div>
+                                            </aura:if>
+                                   
+
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'checkbox')}">
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:input name="{!field}" aura:id="formInput"  type="{!field.fieldType}" checked="{!field.value}" label="{!field.label}" disabled="{!!field.editable}" required="{!field.required}" onfocus="{!c.onfocus}" onchange="{!c.onPicklistChange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}" class = "{!field.class}"  fieldLevelHelp = "{!field.fieldLevelHelp}"  messageToggleActive = "{!field.messageToggleActive}"  messageToggleInactive = "{!field.messageToggleInactive}" placeholder = "{!field.placeholder}"  tabindex = "{!field.tabindex}" title = "{!field.title}"  variant = "{!field.variant}"/> <!--onchange="{!c.handleCheck}"-->
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'location')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:inputLocation aura:id="formInput" label="{!field.label}" latitude="{!field.latitude}" longitude="{!field.longitude}" variant="{!field.variant}" title="{!field.title}" fieldLevelHelp = "{!field}" onblur="{!c.onblur}" onchange="{!c.onchange}" onfocus="{!c.onfocus}" required="{!field.required}" disabled="{!!field.editable}" />
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'multipicklist')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:dualListbox  name="{!field}"
+                                            label="{!field.label}"
+                                                fieldLevelHelp = "{!field.fieldLevelHelp}"
+                                                options="{!field.picklistOptions}"
+                                                value="{!field.values}"
+                                                onfocus="{!c.onfocus}" onchange="{!c.onPicklistChange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}" addButtonLabel="{!field.addButtonLabel}" disableReordering="{!field.disableReordering}" disabled="{!!field.editable}" downButtonLabel="{!field.downButtonLabel}" max = "{!field.max}" messageWhenRangeOverflow = "{!field.messageWhenRangeOverflow}"  messageWhenRangeUnderflow = "{!field.messageWhenRangeUnderflow}" messageWhenValueMissing = "{!field.messageWhenValueMissing}" min = "{!field.min}" removeButtonLabel="{!field.removeButtonLabel}" required="{!field.required}" requiredOptions="{!field.requiredOptions}" selectedLabel="{!field.selectedLabel}" showActivityIndicator="{!field.showActivityIndicator}" size="{!field.size}" sourceLabel="{!field.sourceLabel}" tabindex = "{!field.tabindex}" upButtonLabel="{!field.upButtonLabel}"   variant="{!field.variant}"/>
+                                        </div>
+                                    </aura:if>
+
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'inputRich')}">                                        
+                                        <div class="slds-form-element__control slds-p-top_small">              
+                                            <lightning:inputRichText  shareWithEntityId="{!field}"  value="{!field.value}" placeholder = "{!field.placeholder}"  label="{!field.label}" disabled="{!!field.editable}" required="{!field.required}" onfocus="{!c.onfocus}"  onblur="{!c.onblur}"  title="{!field.title}" variant="{!field.variant}" accesskey = "{!field.accesskey}" ariaDescribedby="{!field.ariaDescribedby}" ariaLabel="{!field.ariaLabel}" ariaLabelledby="{!field.ariaLabelledby}" disabledCategories="{!field.disabledCategories}" formats="{!field.formats}" labelVisible="{!field.labelVisible}" messageWhenBadInput = "{!field.messageWhenBadInput}" tabindex = "{!field.tabindex}" valid="{!field.valid}" />
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'textarea')}">
+                                        <div class="slds-form-element__control">
+                                            <lightning:textarea name="{!field}" aura:id="formInput" value="{!field.value}" disabled="{!!field.editable}" required="{!field.required}"  label="{!field.label}" onfocus="{!c.onfocus}" onchange="{!c.onchange}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"  autocomplete = "{!field.autocomplete}"  class = "{!field.class}"  maxlength = "{!field.maxlength}"  messageWhenBadInput = "{!field.messageWhenBadInput}"  messageWhenTooLong = "{!field.messageWhenTooLong}"  messageWhenTooShort = "{!field.messageWhenTooShort}"  messageWhenValueMissing = "{!field.messageWhenValueMissing}"  minlength = "{!field.minlength}"  placeholder = "{!field.placeholder}"  tabindex = "{!field.tabindex}"  title = "{!field.title}"  variant = "{!field.variant}"/>                                                                                    	
+                                        </div>                                    
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'picklist')}">
+                                        
+                                    
+                                        <lightning:select aura:id="formInput" name="{!field}" label="{!field.label}" value="{!field.value}" disabled="{!!field.editable}" required="{!field.required}" onchange="{!c.onPicklistChange}" onfocus="{!c.onfocus}" onblur="{!c.onblur}" accesskey = "{!field.accesskey}"    messageWhenValueMissing = "{!field.messageWhenValueMissing}"  tabindex = "{!field.tabindex}"  title = "{!field.title}"  variant = "{!field.variant}" >
+                                            <option value="">-- Select --</option>
+                                            <aura:iteration items="{!field.picklistOptions}" var="option">
+                                            	<option value="{!option.value}" selected="{!field.value==option.value}">{!option.label}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                   
+
+                                    </aura:if>
+                                    <aura:if isTrue="{!and(field.visible,field.fieldType == 'address')}">
+                                        <div class="slds-form-element__control">
+                                            <lightning:inputAddress aura:id="formInput"
+                                                                    addressLabel="{!field.label}"
+                                                                    streetLabel="Street"
+                                                                    cityLabel="City"
+                                                                    countryLabel="Country"
+                                                                    provinceLabel="State"
+                                                                    postalCodeLabel="PostalCode"
+                                                                    street="{!field.address.street}"
+                                                                    city="{!field.address.city}"
+                                                                    country="{!field.address.country}"
+                                                                    province="{!field.address.province}"
+                                                                    postalCode="{!field.address.postalCode}"
+                                                                    disabled="{!!field.editable}" required="{!field.required}"
+                                                                    fieldLevelHelp="Help Text for inputAddress field"
+                                                                    />
+                                            
+                                        </div>                                    
+                                    </aura:if>
+                                </aura:iteration>
+                            </aura:if>
+                        </div>
+                    </div>      
+                </div>
+            </aura:iteration> 
+            <!-- <lightning:button variant="brand" label="Save" title="Save Record" onclick="{!c.saveRecord}" /> -->
+        </aura:if>
+    </div>
+</aura:component>
